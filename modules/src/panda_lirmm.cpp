@@ -142,6 +142,17 @@ void PandaLIRMM::addBox(const std::string & box_name,
   _minimalSelfCollisions.emplace_back("convex_panda_link7", "robot_stand", i, s, d);
 }
 
+std::string make_temporary_path(const std::string & prefix)
+{
+  auto tmp = bfs::temp_directory_path();
+  auto pattern = fmt::format("{}-%%%%-%%%%-%%%%-%%%%", prefix);
+  // std::filesystem does not have a unique_path function in c++17
+  // keep boost around for now
+  auto out = tmp / bfs::unique_path(pattern).string();
+  bfs::create_directories(out);
+  return out.string();
+}
+
 void PandaLIRMM::create_urdf()
 {
   const auto & robot_name = this->name;
@@ -149,7 +160,7 @@ void PandaLIRMM::create_urdf()
   mbc = rbd::MultiBodyConfig(mb);
   mbc.zero(mb);
 
-  this->urdf_path = (bfs::temp_directory_path() / (robot_name + ".urdf")).string();
+  this->urdf_path = make_temporary_path(robot_name) + ".urdf";
   {
     rbd::parsers::Limits limits;
     limits.lower = _bounds[0];
