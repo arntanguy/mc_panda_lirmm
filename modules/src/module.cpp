@@ -181,11 +181,11 @@ extern "C"
                                          size.z() / 2, size.x(), size.y(), size.z(), mass);
 
               auto boxConfig = mc_rtc::Configuration::fromYAMLData(boxYaml);
-              auto rmV = mc_rbdyn::robotModuleFromVisual("box", boxConfig);
+              auto rmV = mc_rbdyn::robotModuleFromVisual("robot_support", boxConfig);
               auto pandaRm = mc_rbdyn::RobotLoader::get_robot_module(panda_module);
 
               return new mc_rbdyn::RobotModule(rmV->connect(
-                  *pandaRm, "box", "world", "",
+                  *pandaRm, "robot_support", "world", "",
                   mc_rbdyn::RobotModule::ConnectionParameters{}.name(robot_name).X_other_connection(box_to_robot)));
             };
           });
